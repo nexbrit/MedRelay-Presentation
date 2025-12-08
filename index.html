@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedRelay - GP Capability Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Light Theme Variables */
+        :root, [data-theme="light"] {
+            --primary: #0a2540;
+            --primary-light: #1a4971;
+            --accent: #00a67d;
+            --accent-light: #e6f7f2;
+            --nhs-blue: #005EB8;
+            --nhs-light: #e8f4fc;
+            --warning: #e67e22;
+            --warning-light: #fef5e7;
+            --danger: #dc3545;
+            --danger-light: #fdf2f2;
+            --success: #10ac84;
+            --purple: #7c3aed;
+            --purple-light: #f3e8ff;
+            --bg: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-muted: #f1f5f9;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --card-bg: #ffffff;
+            --nav-bg: #ffffff;
+            --pattern-opacity: 0.03;
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --primary: #e2e8f0;
+            --primary-light: #94a3b8;
+            --accent: #00d4aa;
+            --accent-light: rgba(0, 212, 170, 0.15);
+            --nhs-blue: #60a5fa;
+            --nhs-light: rgba(96, 165, 250, 0.15);
+            --warning: #fbbf24;
+            --warning-light: rgba(251, 191, 36, 0.15);
+            --danger: #f87171;
+            --danger-light: rgba(248, 113, 113, 0.15);
+            --success: #34d399;
+            --purple: #a78bfa;
+            --purple-light: rgba(167, 139, 250, 0.15);
+            --bg: #0a1628;
+            --bg-subtle: #111d32;
+            --bg-muted: #162032;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --nav-bg: rgba(10, 22, 40, 0.95);
+            --pattern-opacity: 0.02;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--nav-bg);
+            padding: 8px 16px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 12px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .theme-switcher span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 56px;
+            height: 28px;
+            background: var(--bg-muted);
+            border-radius: 100px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(28px);
+        }
+
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-icon.sun {
+            left: 7px;
+            opacity: 1;
+        }
+
+        .theme-icon.moon {
+            right: 7px;
+            opacity: 0.5;
+        }
+
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0.5;
+        }
+
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+        }
+
+        /* Presentation Container */
+        .presentation {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slides-container {
+            display: flex;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* Individual Slides */
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            padding: 60px 100px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg);
+            transition: background 0.3s ease;
+        }
+
+        /* Background Pattern */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 0% 0%, rgba(0, 166, 125, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(0, 94, 184, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dot Pattern */
+        .dot-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            opacity: var(--pattern-opacity);
+            color: var(--text);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--primary);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            max-width: 800px;
+        }
+
+        /* Badges */
+        .badge-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+        }
+
+        .badge-nhs {
+            background: var(--nhs-light);
+            color: var(--nhs-blue);
+        }
+
+        .badge-safety {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 24px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 32px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--nhs-blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* Stats */
+        .stat-card {
+            text-align: center;
+            padding: 32px 24px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-number {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Quotes */
+        .quote-block {
+            position: relative;
+            padding: 20px 24px;
+            background: var(--bg-subtle);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            transition: all 0.3s ease;
+        }
+
+        .quote-text {
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .quote-author {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-style: normal;
+        }
+
+        /* Process Flow */
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .process-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--nhs-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* Before/After Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 32px;
+            align-items: stretch;
+        }
+
+        .comparison-panel {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-panel.before {
+            border-color: var(--danger);
+            background: var(--danger-light);
+        }
+
+        .comparison-panel.after {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .comparison-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arrow-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), var(--nhs-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 166, 125, 0.3);
+        }
+
+        .time-badge {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .time-badge.slow {
+            background: var(--danger-light);
+            border: 1px solid var(--danger);
+        }
+
+        .time-badge.fast {
+            background: var(--accent-light);
+            border: 1px solid var(--accent);
+        }
+
+        .time-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .time-subtext {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .time-badge.slow .time-value { color: var(--danger); }
+        .time-badge.fast .time-value { color: var(--accent); }
+
+        /* Priority Distribution */
+        .priority-grid {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .priority-item {
+            flex: 1;
+            text-align: center;
+            padding: 20px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .priority-item.emergency { background: var(--danger-light); border-color: var(--danger); }
+        .priority-item.urgent { background: var(--warning-light); border-color: var(--warning); }
+        .priority-item.soon { background: rgba(245, 158, 11, 0.15); border-color: #f59e0b; }
+        .priority-item.routine { background: var(--accent-light); border-color: var(--accent); }
+        .priority-item.review { background: var(--purple-light); border-color: var(--purple); }
+
+        .priority-count {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .priority-item.emergency .priority-count { color: var(--danger); }
+        .priority-item.urgent .priority-count { color: var(--warning); }
+        .priority-item.soon .priority-count { color: #f59e0b; }
+        .priority-item.routine .priority-count { color: var(--accent); }
+        .priority-item.review .priority-count { color: var(--purple); }
+
+        .priority-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            background: var(--nav-bg);
+            padding: 12px 24px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 24px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--nhs-blue));
+            transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+            z-index: 1000;
+        }
+
+        /* Keyboard Hints */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .key {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 0 4px;
+        }
+
+        /* Footer */
+        .slide-footer {
+            margin-top: auto;
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .animate-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-in {
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s !important; }
+        .delay-2 { animation-delay: 0.2s !important; }
+        .delay-3 { animation-delay: 0.3s !important; }
+        .delay-4 { animation-delay: 0.4s !important; }
+        .delay-5 { animation-delay: 0.5s !important; }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: var(--accent-light);
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 24px 28px;
+            transition: all 0.3s ease;
+        }
+
+        /* Check List */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .feature-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* CTA Section */
+        .cta-box {
+            background: linear-gradient(135deg, var(--primary), var(--nhs-blue));
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .cta-box {
+            background: linear-gradient(135deg, #1a365d, #1e40af);
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .cta-box h3, .cta-box p {
+            position: relative;
+            color: white;
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+        }
+
+        .info-table tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-table td {
+            padding: 16px 0;
+            font-size: 1.05rem;
+        }
+
+        .info-table td:first-child {
+            color: var(--text-muted);
+            width: 40%;
+        }
+
+        /* Point Cards */
+        .point-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .point-card:hover {
+            border-color: var(--accent);
+        }
+
+        .point-card h4 {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .point-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Center Content */
+        .center-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* No indicator */
+        .no-indicator {
+            color: var(--danger);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Question Cards */
+        .question-card {
+            text-align: center;
+            padding: 32px 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .question-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .question-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .question-card h4 {
+            color: var(--text);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .question-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Title slide special styling */
+        .slide-title {
+            background: linear-gradient(135deg, #0a2540 0%, #1a365d 100%) !important;
+            color: white;
+        }
+
+        .slide-title h1 {
+            color: white;
+        }
+
+        .slide-title .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .slide-title .lead {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .slide-title .slide-footer {
+            color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-title::before {
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 94, 184, 0.15) 0%, transparent 50%);
+        }
+
+        /* Questions slide */
+        .slide-questions {
+            background: linear-gradient(135deg, #0a2540 0%, #1a365d 100%) !important;
+            color: white;
+        }
+
+        .slide-questions h1 {
+            color: white;
+        }
+
+        .slide-questions .lead {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .slide-questions .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .slide-questions .question-card h4 {
+            color: white;
+        }
+
+        .slide-questions .question-card p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .slide-questions .slide-footer {
+            color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .slide { padding: 40px 60px; }
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 2.5rem; }
+            .grid-2 { gap: 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 30px 24px; }
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .comparison-arrow { transform: rotate(90deg); }
+            .theme-switcher { top: 10px; right: 10px; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <span>☀️</span>
+        <div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle theme">
+            <span class="theme-icon sun">☀️</span>
+            <span class="theme-icon moon">🌙</span>
+        </div>
+        <span>🌙</span>
+    </div>
+
+    <div class="presentation">
+        <div class="slides-container" id="slidesContainer">
+            
+            <!-- Slide 1: Title -->
+            <section class="slide slide-title" data-slide="1">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <p class="animate-in delay-1" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+                            Introducing
+                        </p>
+                        <h1 class="animate-in delay-2" style="margin-bottom: 24px;">MedRelay</h1>
+                        <p class="subtitle animate-in delay-3">A helpful assistant for busy hospital teams.</p>
+                        <p class="lead animate-in delay-4" style="margin-top: 32px;">
+                            Hospital triage teams do excellent work every day. MedRelay helps them do it faster —
+                            pre-reading referrals and highlighting key information so consultants can focus on clinical decisions.
+                        </p>
+                        <div class="badge-row animate-in delay-5">
+                            <span class="badge" style="background: rgba(255,255,255,0.15); color: white;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                NHS Compliant
+                            </span>
+                            <span class="badge" style="background: rgba(0, 212, 170, 0.2); color: #5eead4;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                NICE NG12 & CG103 Guidelines
+                            </span>
+                        </div>
+                    </div>
+                    <footer class="slide-footer">
+                        <span>GP Trial Introduction</span>
+                        <span>December 2025</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 2: Celebrating What Works -->
+            <section class="slide" data-slide="2">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">The NHS Referral System Works</h2>
+                    <p class="subtitle animate-in delay-1" style="margin-bottom: 40px;">Let us be clear about what we are celebrating.</p>
+
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <div class="point-card animate-in delay-2">
+                                <h4 style="color: var(--accent);">Consultant Expertise is Irreplaceable</h4>
+                                <p>Every day, consultants make nuanced clinical judgments that no algorithm can replicate. Their years of training and experience catch what rules cannot.</p>
+                            </div>
+                            <div class="point-card animate-in delay-3">
+                                <h4 style="color: var(--accent);">Triage Nurses are Exceptional</h4>
+                                <p>Specialist nurses manage impossible volumes with skill and dedication. They are the backbone of secondary care access.</p>
+                            </div>
+                            <div class="point-card animate-in delay-4">
+                                <h4 style="color: var(--accent);">Admin Staff Keep It Running</h4>
+                                <p>The coordination of appointments, tracking, and patient communication is handled with professionalism despite resource constraints.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="card animate-in delay-5" style="text-align: center; width: 100%; border: 2px solid var(--accent);">
+                                <h3 style="font-size: 1.8rem; color: var(--accent); margin-bottom: 24px;">Our Role</h3>
+                                <p style="font-size: 1.2rem; line-height: 1.8; color: var(--text-muted);">
+                                    MedRelay is not here to fix something broken.
+                                    <br><br>
+                                    <strong style="color: var(--text);">We are here to speed up the process.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Our Philosophy</span>
+                        <span>Supporting Excellence</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 3: The Challenge -->
+            <section class="slide" data-slide="3">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">The Challenge: Time, Not Quality</h2>
+                    <p class="lead animate-in delay-1" style="margin-bottom: 40px;">
+                        Hospital teams deliver excellent care. The challenge is doing it with limited time and growing volumes.
+                    </p>
+
+                    <div class="grid-2" style="flex: 1;">
+                        <div class="card animate-in delay-2" style="border-left: 4px solid var(--nhs-blue);">
+                            <h3 style="color: var(--nhs-blue); margin-bottom: 24px;">What We Hear From Hospital Teams</h3>
+                            <div class="quote-block" style="border-color: var(--nhs-blue);">
+                                <p class="quote-text">"The clinical decisions are not the hard part — I know what to do with each case. It's reading through 40 letters to find the key information."</p>
+                                <p class="quote-author">— ENT Consultant</p>
+                            </div>
+                            <div class="quote-block" style="border-color: var(--nhs-blue);">
+                                <p class="quote-text">"We spend hours answering GP calls asking about referral status. Both sides lose time."</p>
+                                <p class="quote-author">— Triage Nurse</p>
+                            </div>
+                            <div class="quote-block" style="border-color: var(--nhs-blue);">
+                                <p class="quote-text">"Every letter is formatted differently. I wish someone had already pulled out the age, duration, and key symptoms."</p>
+                                <p class="quote-author">— Specialty Registrar</p>
+                            </div>
+                        </div>
+                        <div class="card animate-in delay-3" style="border-left: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 24px;">What GPs Experience</h3>
+                            <div class="quote-block">
+                                <p class="quote-text">"I send a referral and then... silence. My patient calls asking if I've heard anything. I haven't."</p>
+                            </div>
+                            <div class="quote-block">
+                                <p class="quote-text">"My staff spend time chasing referrals. Hospital staff spend time answering. Nobody wins."</p>
+                            </div>
+                            <div class="quote-block">
+                                <p class="quote-text">"When a referral is returned, I sometimes don't know exactly what was missing."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box animate-in delay-4" style="margin-top: 32px;">
+                        <h4 style="color: var(--primary); margin-bottom: 8px;">The Opportunity</h4>
+                        <p style="color: var(--text-muted);">What if we could pre-process referrals — extracting key information, checking against guidelines, flagging urgent cases — so clinicians could spend their time on clinical decisions rather than administrative reading?</p>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>The Challenge</span>
+                        <span>Time is the constraint, not capability</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 4: What MedRelay Does - Technical -->
+            <section class="slide" data-slide="4">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">What MedRelay Actually Does</h2>
+                    <p class="subtitle animate-in delay-1" style="margin-bottom: 32px;">Transparent capabilities — no black boxes.</p>
+
+                    <div class="grid-3 animate-in delay-2" style="margin-bottom: 24px;">
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">1. Document Processing</h4>
+                            <ul class="feature-list">
+                                <li>Reads PDF, DOCX, and TXT files</li>
+                                <li>Assesses extraction quality (OCR detection)</li>
+                                <li>Flags low-quality scans for manual review</li>
+                                <li>Detects multiple patients in single documents</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">2. Clinical Information Extraction</h4>
+                            <ul class="feature-list">
+                                <li>Patient demographics (age, NHS number)</li>
+                                <li>Symptom duration with temporal categories</li>
+                                <li>Risk factors (smoking, alcohol)</li>
+                                <li>Clinical entities with SNOMED codes</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">3. Guideline Checking</h4>
+                            <ul class="feature-list">
+                                <li>60+ rules based on NICE NG12 & CG103</li>
+                                <li>Duration thresholds (e.g., 3-week hoarseness)</li>
+                                <li>Age thresholds (e.g., 45+ for 2WW)</li>
+                                <li>Red flag combinations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid-3 animate-in delay-3" style="margin-bottom: 32px;">
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">4. Negation Handling</h4>
+                            <ul class="feature-list">
+                                <li>"No stridor" does NOT trigger emergency</li>
+                                <li>40+ negation patterns recognised</li>
+                                <li>Handles medical abbreviations (-ve, r/o)</li>
+                                <li>Context-aware terminators</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">5. Temporal Validation</h4>
+                            <ul class="feature-list">
+                                <li>5 clinical categories (hyperacute to chronic)</li>
+                                <li>Conflict detection ("sudden" vs "6 months")</li>
+                                <li>NICE duration threshold checking</li>
+                                <li>Confidence adjustment for ambiguity</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">6. Dual Validation</h4>
+                            <ul class="feature-list">
+                                <li>Deterministic rules run first (safety net)</li>
+                                <li>AI provides confidence scoring</li>
+                                <li>Rules always override AI suggestions</li>
+                                <li>Full audit trail for every decision</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid-4 animate-in delay-4">
+                        <div class="stat-card">
+                            <div class="stat-number">5-10s</div>
+                            <div class="stat-label">Processing per referral</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">60+</div>
+                            <div class="stat-label">NICE-based rules</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">40+</div>
+                            <div class="stat-label">Negation patterns</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Audit coverage</div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Technical Capabilities</span>
+                        <span>Built for transparency</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 5: Built With Clinical Input -->
+            <section class="slide" data-slide="5">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">Built With Clinical Input</h2>
+                    <p class="subtitle animate-in delay-1" style="margin-bottom: 40px;">This is not technology looking for a problem.</p>
+
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <div class="point-card animate-in delay-2">
+                                <h4 style="color: var(--accent);">Clinical Safety is Priority One</h4>
+                                <p>We'd rather flag too many cases for review than miss a single urgent one. When in doubt, the system defaults to "requires clinician review."</p>
+                            </div>
+                            <div class="point-card animate-in delay-3">
+                                <h4 style="color: var(--accent);">NICE Guidelines as Foundation</h4>
+                                <p>Rules are based directly on NICE NG12 (suspected cancer) and CG103 (hearing loss). We follow published evidence, not assumptions.</p>
+                            </div>
+                            <div class="point-card animate-in delay-4">
+                                <h4 style="color: var(--accent);">Designed for Real Workflows</h4>
+                                <p>We've watched how triage actually happens — the interruptions, the time pressure, the variety of letter formats. MedRelay fits into real practice.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="card animate-in delay-5" style="width: 100%; border: 2px solid var(--accent);">
+                                <h3 style="color: var(--accent); margin-bottom: 24px;">Clinical Safety Features</h3>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>Red flags always surface to the top</span>
+                                </div>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>Low confidence triggers mandatory review</span>
+                                </div>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>Unknown presentations flagged as "Unknown"</span>
+                                </div>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>GP uncertainty language detected</span>
+                                </div>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>Multiple patient detection (safety check)</span>
+                                </div>
+                                <div class="check-item">
+                                    <div class="check-icon">✓</div>
+                                    <span>Every decision logged with full reasoning</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Clinical Foundation</span>
+                        <span>Designed by clinicians, for clinicians</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 6: What We Do NOT Do -->
+            <section class="slide" data-slide="6">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">What We Do NOT Do</h2>
+                    <p class="subtitle animate-in delay-1" style="margin-bottom: 40px;">Honesty about limitations is essential for trust.</p>
+
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <div class="point-card animate-in delay-2">
+                                <h4><span class="no-indicator">✕</span> Replacing Clinical Judgment</h4>
+                                <p>MedRelay suggests. Clinicians decide. Always. The consultant approval step is not optional — it's fundamental to how the system works.</p>
+                            </div>
+                            <div class="point-card animate-in delay-3">
+                                <h4><span class="no-indicator">✕</span> Making Final Decisions</h4>
+                                <p>We pre-process and highlight. We don't determine patient pathways. Every referral requires human approval before any action is taken.</p>
+                            </div>
+                            <div class="point-card animate-in delay-4">
+                                <h4><span class="no-indicator">✕</span> Working Without Oversight</h4>
+                                <p>There's no "auto-approve" mode. There's no "trust the AI" setting. Human oversight is baked into every workflow.</p>
+                            </div>
+                            <div class="point-card animate-in delay-5">
+                                <h4><span class="no-indicator">✕</span> Claiming Perfection</h4>
+                                <p>The system will make mistakes. That's why confidence scores exist. That's why consultants have the final say.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="card animate-in delay-5" style="text-align: center; width: 100%; border: 2px solid var(--accent);">
+                                <h3 style="font-size: 1.8rem; color: var(--accent); margin-bottom: 24px;">Our Commitment</h3>
+                                <p style="font-size: 1.15rem; line-height: 2; color: var(--text);">
+                                    We are a <strong>time-saving assistant</strong>,<br>
+                                    not a clinical replacement.
+                                    <br><br>
+                                    We <strong>support</strong> hospital teams,<br>
+                                    we don't substitute for them.
+                                    <br><br>
+                                    We are <strong>transparent</strong> about what we can<br>
+                                    and cannot do.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Honest Limitations</span>
+                        <span>Trust through transparency</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 7: How It Works - Flow -->
+            <section class="slide" data-slide="7">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">How MedRelay Works — The Flow</h2>
+                    <p class="lead animate-in delay-1" style="margin-bottom: 32px;">
+                        Think of it as a highly-trained assistant that reads referrals before the consultant, extracting key information and checking against guidelines.
+                    </p>
+
+                    <div class="comparison-grid animate-in delay-2" style="flex: 1;">
+                        <div class="comparison-panel before">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                                <div class="step-number" style="background: var(--danger);">1</div>
+                                <h3 style="margin: 0; color: var(--danger);">Current Process</h3>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">01</span>
+                                <span>Referral arrives in inbox</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">02</span>
+                                <span><strong style="color: var(--danger);">Waits in queue for days or weeks</strong></span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">03</span>
+                                <span>Consultant reads entire letter</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">04</span>
+                                <span>Hunts for key information</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">05</span>
+                                <span>Mentally checks against guidelines</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--text-muted); font-size: 0.9rem;">06</span>
+                                <span>Makes triage decision</span>
+                            </div>
+                            <div class="time-badge slow">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Time to triage</div>
+                                <div class="time-value">Days to Weeks</div>
+                                <div class="time-subtext">+ 8-12 min reading per referral</div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-arrow">
+                            <div class="arrow-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="comparison-panel after">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                                <div class="step-number">2</div>
+                                <h3 style="margin: 0; color: var(--accent);">With MedRelay</h3>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <span>Referral processed <strong>immediately</strong></span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <span>Key info already extracted</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <span>Red flags highlighted at top</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <span>NICE guidelines pre-checked</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <span>Priority suggested with reasoning</span>
+                            </div>
+                            <div class="process-step">
+                                <span style="color: var(--accent);">✓</span>
+                                <strong>Consultant reviews and approves</strong>
+                            </div>
+                            <div class="time-badge fast">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Time to triage</div>
+                                <div class="time-value">Minutes</div>
+                                <div class="time-subtext">60-90 sec review per referral</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box animate-in delay-3" style="margin-top: 24px;">
+                        <p style="color: var(--text); font-size: 1.05rem;">
+                            <strong style="color: var(--accent);">Critical Point:</strong> The consultant still makes the decision. MedRelay does the preparation work — the reading, extracting, and guideline checking that takes time but doesn't require years of clinical training.
+                        </p>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>How It Works</span>
+                        <span>Days → Minutes</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 8: Day in the Life -->
+            <section class="slide" data-slide="8">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">A Day in the Life</h2>
+                    <p class="subtitle animate-in delay-1" style="margin-bottom: 40px;">Monday morning. ENT Department.</p>
+
+                    <div style="max-width: 1000px; margin: 0 auto; flex: 1;">
+                        <div class="card animate-in delay-2" style="margin-bottom: 24px; border-left: 4px solid var(--text-muted);">
+                            <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 16px;">
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--text-muted);">9:00 AM</div>
+                                <div>
+                                    <h3 style="margin: 0; color: var(--text);">Dr. Chen, ENT Consultant, opens MedRelay</h3>
+                                    <p style="color: var(--text-muted); margin: 0;">47 referrals landed over the weekend</p>
+                                </div>
+                            </div>
+                            <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.7;">
+                                In the current system, that's a full morning of reading through letters, hunting for key details, checking guidelines. Coffee goes cold. Clinic starts late. <strong style="color: var(--danger);">Some referrals may have been waiting days or weeks already.</strong>
+                            </p>
+                        </div>
+
+                        <div class="card animate-in delay-3" style="border: 2px solid var(--accent);">
+                            <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 20px;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">With MedRelay</div>
+                                <div>
+                                    <h3 style="margin: 0; color: var(--accent);">All 47 are already processed</h3>
+                                    <p style="color: var(--text-muted); margin: 0;">Organised by priority, key info extracted</p>
+                                </div>
+                            </div>
+
+                            <div class="priority-grid">
+                                <div class="priority-item emergency">
+                                    <div class="priority-count">3</div>
+                                    <div class="priority-label">Emergency</div>
+                                </div>
+                                <div class="priority-item urgent">
+                                    <div class="priority-count">5</div>
+                                    <div class="priority-label">Urgent (2WW)</div>
+                                </div>
+                                <div class="priority-item soon">
+                                    <div class="priority-count">8</div>
+                                    <div class="priority-label">Soon</div>
+                                </div>
+                                <div class="priority-item routine">
+                                    <div class="priority-count">27</div>
+                                    <div class="priority-label">Routine</div>
+                                </div>
+                                <div class="priority-item review">
+                                    <div class="priority-count">4</div>
+                                    <div class="priority-label">Needs Review</div>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; margin-top: 20px;">
+                                The 3 emergency cases are at the top. Key findings highlighted. NICE guideline flags visible.
+                                Dr. Chen reviews the emergency and urgent cases first — <strong style="color: var(--text);">20 minutes total</strong>.
+                                The routine cases? Quick scan and approve.
+                                <strong style="color: var(--accent);">Done by 9:45.</strong> Clinic starts on time.
+                            </p>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Day in the Life</span>
+                        <span>Same quality decisions. Less time reading.</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 9: Safety -->
+            <section class="slide" data-slide="9">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">But Is AI Safe for Clinical Work?</h2>
+                    <p class="lead animate-in delay-1" style="margin-bottom: 40px;">
+                        Let us be very clear: <strong style="color: var(--accent);">the AI does not make decisions. Clinicians do.</strong>
+                        MedRelay is a transparent assistant, not a replacement for clinical judgment.
+                    </p>
+
+                    <div class="grid-2" style="flex: 1;">
+                        <div>
+                            <div class="point-card animate-in delay-2">
+                                <h4 style="color: var(--accent);">You See Everything</h4>
+                                <p>Every piece of information the AI extracted. Every rule it checked. Every reason for its suggestion. No black boxes. Full transparency.</p>
+                            </div>
+                            <div class="point-card animate-in delay-3">
+                                <h4 style="color: var(--accent);">Rules Override AI</h4>
+                                <p>Hard-coded clinical rules (based on NICE guidelines) always take precedence. If a red flag is present, it's flagged — regardless of what the AI model thinks.</p>
+                            </div>
+                            <div class="point-card animate-in delay-4">
+                                <h4 style="color: var(--accent);">Uncertainty = Human Review</h4>
+                                <p>Low confidence? Conflicting signals? Unusual presentation? These go straight to a clinician for review. No auto-routing of edge cases.</p>
+                            </div>
+                            <div class="point-card animate-in delay-5">
+                                <h4 style="color: var(--accent);">Unknown = Unknown</h4>
+                                <p>If no rules match, the system returns "Unknown" priority — not "Routine". Atypical presentations are flagged for specialist review.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="card animate-in delay-5" style="text-align: center; width: 100%; border: 2px solid var(--accent);">
+                                <h3 style="font-size: 1.5rem; line-height: 1.6; font-weight: 400; color: var(--primary);">
+                                    "Preview before acting.<br>
+                                    Inspect with clarity.<br>
+                                    Decide with confidence."
+                                </h3>
+                                <p style="color: var(--text-muted); margin-top: 20px;">Our core philosophy</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Safety</span>
+                        <span>AI assists. Clinicians decide.</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 10: GP Experience -->
+            <section class="slide" data-slide="10">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">What This Means for GPs</h2>
+
+                    <div class="grid-2" style="flex: 1; margin-top: 32px;">
+                        <div class="card animate-in delay-2" style="border-top: 4px solid var(--accent);">
+                            <h3 style="color: var(--accent); margin-bottom: 24px;">What Gets Better</h3>
+
+                            <div class="process-step">
+                                <div class="step-number">1</div>
+                                <div>
+                                    <strong>Faster acknowledgment</strong>
+                                    <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.95rem;">
+                                        Your referral is triaged within <strong>minutes</strong> of arrival, not days or weeks. You'll know it's been received and processed.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">2</div>
+                                <div>
+                                    <strong>Clear feedback on missing information</strong>
+                                    <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.95rem;">
+                                        If something's missing, you'll know specifically what — not a generic rejection letter.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">3</div>
+                                <div>
+                                    <strong>Fewer chase calls</strong>
+                                    <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.95rem;">
+                                        Your staff won't need to call hospitals to confirm receipt. Status is visible in the system.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="process-step" style="border-bottom: none;">
+                                <div class="step-number">4</div>
+                                <div>
+                                    <strong>Urgent cases prioritised properly</strong>
+                                    <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.95rem;">
+                                        2WW referrals are identified and flagged immediately. They don't sit in a queue for weeks.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in delay-3" style="border-top: 4px solid var(--nhs-blue);">
+                            <h3 style="color: var(--nhs-blue); margin-bottom: 24px;">What Stays The Same</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 24px; color: var(--text-muted);">
+                                You don't need to learn new software or change your referral process.
+                            </p>
+                            <div class="check-item">
+                                <div class="check-icon">✓</div>
+                                <span>Write referrals however you normally do</span>
+                            </div>
+                            <div class="check-item">
+                                <div class="check-icon">✓</div>
+                                <span>Send via your usual channel (eRS, email, fax)</span>
+                            </div>
+                            <div class="check-item">
+                                <div class="check-icon">✓</div>
+                                <span>Use your own words and format</span>
+                            </div>
+                            <div class="check-item">
+                                <div class="check-icon">✓</div>
+                                <span>Include the information you always include</span>
+                            </div>
+
+                            <div class="highlight-box" style="margin-top: 24px;">
+                                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                                    <strong style="color: var(--text);">The only difference:</strong> On the receiving end, your letter is read by an AI assistant that extracts the key points and presents them to the consultant in a standardised format.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>For GPs</span>
+                        <span>Your workflow stays the same. Results get better.</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 11: The Trial -->
+            <section class="slide" data-slide="11">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">What We're Asking</h2>
+
+                    <div class="grid-2" style="flex: 1; margin-top: 40px;">
+                        <div>
+                            <h3 class="animate-in delay-1" style="color: var(--text-muted); margin-bottom: 24px;">During the Trial Period</h3>
+
+                            <div class="point-card animate-in delay-2">
+                                <h4 style="color: var(--accent);">Send us your ENT referrals</h4>
+                                <p>Using your normal process. We'll process them through MedRelay alongside the existing pathway (not instead of).</p>
+                            </div>
+                            <div class="point-card animate-in delay-3">
+                                <h4 style="color: var(--accent);">Share your feedback</h4>
+                                <p>What worked? What didn't? Where did the AI get it wrong? Your input shapes how this evolves.</p>
+                            </div>
+                            <div class="point-card animate-in delay-4">
+                                <h4 style="color: var(--accent);">Patient data stays protected</h4>
+                                <p>All data processing follows NHS IG requirements. No data leaves UK servers. Full audit trail.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center;">
+                            <div class="card animate-in delay-5" style="width: 100%; border: 2px solid var(--accent);">
+                                <h3 style="color: var(--accent); margin-bottom: 24px;">Trial Scope</h3>
+                                <table class="info-table">
+                                    <tr>
+                                        <td>Specialty</td>
+                                        <td><strong>ENT (Ear, Nose & Throat)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Duration</td>
+                                        <td><strong>12 weeks</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Your effort</td>
+                                        <td><strong>Minimal — just send referrals normally</strong></td>
+                                    </tr>
+                                    <tr style="border-bottom: none;">
+                                        <td>Risk to patients</td>
+                                        <td><strong style="color: var(--accent);">None — existing pathway continues</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>The Trial</span>
+                        <span>Low effort, parallel pathway</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 12: Success Metrics -->
+            <section class="slide" data-slide="12">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <h2 class="animate-in">What Success Looks Like</h2>
+
+                    <div class="grid-3 animate-in delay-2" style="margin-top: 48px;">
+                        <div class="card" style="text-align: center; border-top: 4px solid var(--accent);">
+                            <div style="font-size: 4rem; font-weight: 700; color: var(--accent); line-height: 1;">Hours</div>
+                            <div style="color: var(--text-muted); margin-top: 8px; font-size: 1.1rem;">saved per week for consultants</div>
+                            <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                                Time that goes back to patient care, not paperwork.
+                            </p>
+                        </div>
+                        <div class="card" style="text-align: center; border-top: 4px solid var(--nhs-blue);">
+                            <div style="font-size: 4rem; font-weight: 700; color: var(--nhs-blue); line-height: 1;">Minutes</div>
+                            <div style="color: var(--text-muted); margin-top: 8px; font-size: 1.1rem;">not days/weeks to triage</div>
+                            <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                                Urgent cases identified immediately.
+                            </p>
+                        </div>
+                        <div class="card" style="text-align: center; border-top: 4px solid var(--warning);">
+                            <div style="font-size: 4rem; font-weight: 700; color: var(--warning); line-height: 1;">Zero</div>
+                            <div style="color: var(--text-muted); margin-top: 8px; font-size: 1.1rem;">referrals lost in the system</div>
+                            <p style="margin-top: 20px; color: var(--text-muted); font-size: 0.95rem;">
+                                Every referral tracked, every status visible.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="cta-box animate-in delay-3" style="margin-top: 48px;">
+                        <h3 style="font-size: 1.8rem; margin-bottom: 16px;">The Goal</h3>
+                        <p style="font-size: 1.15rem; max-width: 800px; margin: 0 auto; opacity: 0.95;">
+                            Prove that AI-assisted triage preparation is safe, effective, and genuinely helpful —
+                            for GPs, for hospital teams, and most importantly, for patients.
+                        </p>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>Success Metrics</span>
+                        <span>Measurable improvements for everyone</span>
+                    </footer>
+                </div>
+            </section>
+
+            <!-- Slide 13: Questions -->
+            <section class="slide slide-questions" data-slide="13">
+                <div class="dot-pattern"></div>
+                <div class="slide-content">
+                    <div class="center-content">
+                        <h1 class="animate-in" style="font-size: 4rem; margin-bottom: 24px; color: white;">Questions?</h1>
+                        <p class="lead animate-in delay-1" style="margin-bottom: 48px; text-align: center;">
+                            We're here to discuss concerns, answer questions, and hear your perspective.
+                        </p>
+
+                        <div class="grid-3 animate-in delay-2" style="max-width: 900px;">
+                            <div class="question-card">
+                                <div class="question-icon">🔒</div>
+                                <h4>Data & Privacy</h4>
+                                <p>How is patient data protected?</p>
+                            </div>
+                            <div class="question-card">
+                                <div class="question-icon">🛡️</div>
+                                <h4>Clinical Safety</h4>
+                                <p>How do we ensure AI doesn't miss things?</p>
+                            </div>
+                            <div class="question-card">
+                                <div class="question-icon">🔗</div>
+                                <h4>Integration</h4>
+                                <p>How does this fit with existing systems?</p>
+                            </div>
+                        </div>
+
+                        <div class="animate-in delay-3" style="margin-top: 64px; text-align: center;">
+                            <p style="font-size: 1.2rem; color: white;">
+                                MedRelay — Helping hospital teams work faster, not harder
+                            </p>
+                            <p style="font-size: 1rem; color: rgba(255,255,255,0.7); margin-top: 12px;">
+                                Supporting the excellent work already being done
+                            </p>
+                        </div>
+                    </div>
+
+                    <footer class="slide-footer">
+                        <span>GP Trial Introduction</span>
+                        <span>December 2025</span>
+                    </footer>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" aria-label="Previous slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+        </button>
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">13</span>
+        </div>
+        <button class="nav-btn" id="nextBtn" aria-label="Next slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="keyboard-hint">
+        Press <span class="key">←</span> <span class="key">→</span> or <span class="key">Space</span> to navigate
+    </div>
+
+    <script>
+        // Theme Switcher
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('medrelay-theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('medrelay-theme', newTheme);
+        });
+
+        // Slide Navigation
+        const slidesContainer = document.getElementById('slidesContainer');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideEl = document.getElementById('currentSlide');
+        const totalSlidesEl = document.getElementById('totalSlides');
+        const progressBar = document.getElementById('progress');
+        const keyboardHint = document.querySelector('.keyboard-hint');
+
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        totalSlidesEl.textContent = totalSlides;
+
+        function updateSlide() {
+            slidesContainer.style.transform = `translateX(-${currentSlide * 100}vw)`;
+            currentSlideEl.textContent = currentSlide + 1;
+            
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+            
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Hide keyboard hint
+        let hintHidden = false;
+        function hideHint() {
+            if (!hintHidden) {
+                keyboardHint.style.opacity = '0';
+                setTimeout(() => {
+                    keyboardHint.style.display = 'none';
+                }, 300);
+                hintHidden = true;
+            }
+        }
+
+        document.addEventListener('keydown', hideHint);
+        document.addEventListener('click', hideHint);
+
+        updateSlide();
+
+        slidesContainer.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const windowWidth = window.innerWidth;
+            
+            if (clickX > windowWidth * 0.7) {
+                nextSlide();
+            } else if (clickX < windowWidth * 0.3) {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
