@@ -20,7 +20,7 @@ websocket-client==1.7.0
 # Async Support
 aiohttp==3.9.1
 
-# Database (optional)
+# Database
 sqlalchemy==2.0.23
 
 # Logging
@@ -34,3 +34,19 @@ pytest-mock==3.12.0
 # Utilities
 schedule==1.2.0
 pyyaml==6.0.1
+
+# Terminal UI
+rich==13.7.0
+
+# Statistical Analysis
+scipy==1.11.4
+
+# Type Checking (Development)
+mypy==1.7.1
+types-requests==2.31.0.10
+types-pyyaml==6.0.12.12
+
+# Code Quality (Development)
+pylint==3.0.3
+black==23.12.1
+flake8==6.1.0
