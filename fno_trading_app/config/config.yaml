@@ -40,6 +40,33 @@ trading:
     take_profit_percentage: 4.0
     max_positions: 5
 
+# Advanced Risk Management (Phase 1)
+risk_management:
+  max_portfolio_heat: 6.0  # Maximum 6% total account risk
+  max_single_position_risk: 2.0  # Maximum 2% per trade
+  max_correlated_exposure: 10.0  # Max 10% in correlated instruments
+  kelly_safety_factor: 0.5  # Use half-Kelly
+  volatility_adjustment: true
+
+# Drawdown Management (Phase 4.2)
+drawdown:
+  max_acceptable_dd: 15.0  # Maximum acceptable drawdown %
+  caution_level: 5.0  # Start reducing size at 5% DD
+  warning_level: 10.0  # Further reduce at 10% DD
+  critical_level: 15.0  # Stop trading at 15% DD
+  emergency_level: 20.0  # Emergency - reassess everything
+
+# Trading Rules (Phase 4.1)
+trading_rules:
+  max_trades_per_day: 5
+  max_consecutive_losses: 3
+  no_trade_first_15min: true
+  no_trade_last_15min: true
+  max_daily_loss: 5000  # In INR
+  mandatory_weekend: true
+  revenge_trading_cooldown_minutes: 60
+  min_time_between_trades_minutes: 5
+
 # Screener Configuration
 screener:
   # Volume filters
@@ -61,6 +88,37 @@ screener:
   # Update intervals
   update_interval_seconds: 60
 
+# Volatility Intelligence (Phase 2.1)
+volatility:
+  iv_high_threshold: 50  # IV Rank > 50 = sell premium
+  iv_low_threshold: 30  # IV Rank < 30 = buy options
+  vix_low: 15  # VIX < 15 = low volatility
+  vix_normal_upper: 25  # VIX 15-25 = normal
+  vix_high: 30  # VIX > 30 = reduce size
+  vix_extreme: 40  # VIX > 40 = stop trading
+
+# Market Regime Detection (Phase 2.2)
+regime:
+  adx_trend_threshold: 25  # ADX > 25 = strong trend
+  atr_high_percentile: 80  # High volatility threshold
+  atr_low_percentile: 20  # Low volatility threshold
+
+# Performance Analytics (Phase 3.1)
+analytics:
+  trade_journal_db: "data/trade_journal.db"
+  performance_snapshots: true
+  snapshot_frequency_hours: 24
+  enable_visualizations: true
+  chart_output_dir: "output/charts"
+
+# News & Sentiment (Phase 3.2)
+news:
+  enable_economic_calendar: true
+  enable_sentiment_analysis: false  # Optional - requires API
+  sentiment_extreme_bullish: 90  # % threshold
+  sentiment_extreme_bearish: 10  # % threshold
+  pre_event_warning_hours: 24
+
 # Data Configuration
 data:
   historical_days: 90
@@ -72,3 +130,9 @@ logging:
   level: "INFO"
   file: "logs/trading.log"
   console: true
+
+# Terminal Dashboard (Phase 4.3)
+dashboard:
+  enable_terminal_ui: true
+  refresh_interval_seconds: 1
+  max_alerts_display: 10
