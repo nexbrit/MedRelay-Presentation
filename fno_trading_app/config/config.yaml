@@ -1,0 +1,74 @@
+# Upstox API Configuration
+upstox:
+  api_key: "YOUR_API_KEY_HERE"
+  api_secret: "YOUR_API_SECRET_HERE"
+  redirect_uri: "http://localhost:8080"
+  sandbox_mode: true  # Set to false for live trading
+
+# Trading Configuration
+trading:
+  instruments:
+    - "NIFTY"
+    - "BANKNIFTY"
+    - "FINNIFTY"
+
+  # Signal generation parameters
+  signals:
+    rsi:
+      period: 14
+      overbought: 70
+      oversold: 30
+
+    macd:
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+
+    ema:
+      short_period: 9
+      medium_period: 21
+      long_period: 50
+
+    bollinger:
+      period: 20
+      std_dev: 2
+
+  # Risk management
+  risk:
+    max_position_size: 100000  # In INR
+    stop_loss_percentage: 2.0
+    take_profit_percentage: 4.0
+    max_positions: 5
+
+# Screener Configuration
+screener:
+  # Volume filters
+  min_volume: 100000
+  volume_surge_factor: 2.0
+
+  # Price filters
+  min_price: 10
+  max_price: 50000
+
+  # Volatility filters
+  min_atr_percentage: 1.0
+  max_atr_percentage: 10.0
+
+  # Option filters
+  min_oi: 100
+  min_oi_change_percentage: 10
+
+  # Update intervals
+  update_interval_seconds: 60
+
+# Data Configuration
+data:
+  historical_days: 90
+  cache_enabled: true
+  cache_ttl_seconds: 300
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: "logs/trading.log"
+  console: true
