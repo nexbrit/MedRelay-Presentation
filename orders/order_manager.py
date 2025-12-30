@@ -106,7 +106,7 @@ class OrderManager:
 
     # Daily limits
     MAX_ORDERS_PER_DAY = 20  # Default daily order limit
-    MAX_CONSECUTIVE_LOSSES = 3  # Block after 3 consecutive losses
+    MAX_CONSECUTIVE_LOSSES = 4  # Block after 4 consecutive losses (oz-fno-wizard recommendation)
 
     def __init__(
         self,

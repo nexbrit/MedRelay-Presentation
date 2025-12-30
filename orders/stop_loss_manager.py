@@ -93,23 +93,37 @@ class StopLossManager:
     """
 
     # Default stop-loss percentages by instrument type
-    DEFAULT_SL_PERCENT = {
-        'INDEX_OPTION': 25.0,   # 25% for index options
-        'STOCK_OPTION': 30.0,   # 30% for stock options (less liquid)
-        'INDEX_FUTURE': 1.5,    # 1.5% for index futures
-        'STOCK_FUTURE': 2.0,    # 2% for stock futures
-        'EQUITY': 5.0,          # 5% for equity
-        'DEFAULT': 20.0         # 20% default
+    # Option BUYERS can use wider stops, SELLERS need tighter stops
+    DEFAULT_SL_PERCENT_BUYER = {
+        'BANKNIFTY_OPTION': 30.0,   # 30% for Bank Nifty options (more volatile)
+        'INDEX_OPTION': 25.0,       # 25% for Nifty option buyers
+        'STOCK_OPTION': 30.0,       # 30% for stock options (less liquid)
+        'BANKNIFTY_FUTURE': 2.0,    # 2% for Bank Nifty futures (more volatile)
+        'INDEX_FUTURE': 1.5,        # 1.5% for Nifty futures
+        'STOCK_FUTURE': 2.0,        # 2% for stock futures
+        'EQUITY': 5.0,              # 5% for equity
+        'DEFAULT': 20.0             # 20% default
+    }
+
+    # Option SELLERS need tighter stops - risk is theoretically unlimited
+    # SL based on premium multiple (exit if premium increases by X%)
+    DEFAULT_SL_PERCENT_SELLER = {
+        'BANKNIFTY_OPTION': 75.0,   # Bank Nifty needs more room due to volatility
+        'INDEX_OPTION': 50.0,       # Exit if premium increases 50%
+        'STOCK_OPTION': 50.0,       # 50% for stock option sellers
+        'DEFAULT': 50.0
     }
 
     # Maximum allowed stop-loss distance
     MAX_SL_PERCENT = {
-        'INDEX_OPTION': 50.0,   # Can lose max 50%
-        'STOCK_OPTION': 50.0,
-        'INDEX_FUTURE': 5.0,    # 5% max for futures
+        'BANKNIFTY_OPTION': 100.0,  # Bank Nifty can be very volatile
+        'INDEX_OPTION': 75.0,       # Nifty options max 75%
+        'STOCK_OPTION': 75.0,
+        'BANKNIFTY_FUTURE': 6.0,    # Bank Nifty slightly wider
+        'INDEX_FUTURE': 5.0,        # 5% max for futures
         'STOCK_FUTURE': 8.0,
         'EQUITY': 10.0,
-        'DEFAULT': 30.0
+        'DEFAULT': 50.0
     }
 
     def __init__(
@@ -135,8 +149,19 @@ class StopLossManager:
         self._is_monitoring = False
 
     def _get_instrument_type(self, symbol: str) -> str:
-        """Determine instrument type from symbol."""
+        """
+        Determine instrument type from symbol.
+
+        Distinguishes Bank Nifty from Nifty for different volatility profiles.
+        """
         symbol_upper = symbol.upper()
+
+        # Bank Nifty is more volatile - handle separately
+        if 'BANKNIFTY' in symbol_upper:
+            if 'CE' in symbol_upper or 'PE' in symbol_upper:
+                return 'BANKNIFTY_OPTION'
+            elif 'FUT' in symbol_upper:
+                return 'BANKNIFTY_FUTURE'
 
         if 'NIFTY' in symbol_upper or 'BANKNIFTY' in symbol_upper:
             if 'CE' in symbol_upper or 'PE' in symbol_upper:
@@ -152,20 +177,40 @@ class StopLossManager:
 
         return 'EQUITY'
 
-    def get_default_sl_percent(self, symbol: str) -> float:
+    def get_default_sl_percent(
+        self,
+        symbol: str,
+        is_seller: bool = False
+    ) -> float:
         """
         Get default stop-loss percentage for an instrument.
 
+        Option SELLERS need tighter stops than BUYERS because their
+        risk is theoretically unlimited. This method returns appropriate
+        defaults based on position type.
+
         Args:
             symbol: Trading symbol
+            is_seller: True if selling (writing) options/futures
 
         Returns:
             Default SL percentage
         """
         instrument_type = self._get_instrument_type(symbol)
-        return self.DEFAULT_SL_PERCENT.get(
+
+        # Option sellers use different (tighter) stops
+        if is_seller and instrument_type in [
+            'INDEX_OPTION', 'BANKNIFTY_OPTION', 'STOCK_OPTION'
+        ]:
+            return self.DEFAULT_SL_PERCENT_SELLER.get(
+                instrument_type,
+                self.DEFAULT_SL_PERCENT_SELLER['DEFAULT']
+            )
+
+        # Buyers use standard stops
+        return self.DEFAULT_SL_PERCENT_BUYER.get(
             instrument_type,
-            self.DEFAULT_SL_PERCENT['DEFAULT']
+            self.DEFAULT_SL_PERCENT_BUYER['DEFAULT']
         )
 
     def calculate_stop_loss_price(
@@ -202,6 +247,7 @@ class StopLossManager:
         sl_price: Optional[float] = None,
         sl_type: StopLossType = StopLossType.FIXED_PERCENT,
         is_long: bool = True,
+        is_seller: bool = False,
         trail_points: Optional[float] = None
     ) -> StopLossOrder:
         """
@@ -216,6 +262,7 @@ class StopLossManager:
             sl_price: Explicit stop-loss price
             sl_type: Type of stop-loss strategy
             is_long: True for long positions
+            is_seller: True if selling/writing options (tighter stops)
             trail_points: Points to trail (for trailing SL)
 
         Returns:
@@ -226,10 +273,8 @@ class StopLossManager:
         # Calculate SL price
         if sl_price is None:
             if sl_percent is None:
-                sl_percent = self.DEFAULT_SL_PERCENT.get(
-                    instrument_type,
-                    self.DEFAULT_SL_PERCENT['DEFAULT']
-                )
+                # Use buyer or seller defaults based on position type
+                sl_percent = self.get_default_sl_percent(symbol, is_seller)
             sl_price = self.calculate_stop_loss_price(
                 entry_price, sl_percent, is_long
             )
