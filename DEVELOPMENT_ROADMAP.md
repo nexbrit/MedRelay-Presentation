@@ -53,30 +53,30 @@ data/
 
 **Tasks:**
 
-- [ ] **1.1.1** Create `market_data_service.py`
-  - [ ] Implement `get_live_quote(instrument_key)` with 5-second cache
-  - [ ] Implement `get_option_chain(underlying, expiry)` with 30-second cache
-  - [ ] Add connection state tracking (Connected/Disconnected/Reconnecting)
-  - [ ] Implement fallback to last known good data if API fails
-  - [ ] Add rate limiting (respect Upstox limits: 250 req/min)
+- [x] **1.1.1** Create `market_data_service.py` ✅ **COMPLETED**
+  - [x] Implement `get_live_quote(instrument_key)` with 5-second cache
+  - [x] Implement `get_option_chain(underlying, expiry)` with 30-second cache
+  - [x] Add connection state tracking (Connected/Disconnected/Reconnecting)
+  - [x] Implement fallback to last known good data if API fails
+  - [x] Add rate limiting (respect Upstox limits: 250 req/min)
 
-- [ ] **1.1.2** Create `portfolio_service.py`
-  - [ ] Implement `get_positions()` - fetch from Upstox API
-  - [ ] Implement `get_holdings()` - fetch from Upstox API
-  - [ ] Implement `calculate_unrealized_pnl()` - real-time P&L calculation
-  - [ ] Implement `calculate_realized_pnl()` - closed positions P&L
-  - [ ] Add portfolio Greeks aggregation (sum Delta, Gamma, Theta, Vega)
+- [x] **1.1.2** Create `portfolio_service.py` ✅ **COMPLETED**
+  - [x] Implement `get_positions()` - fetch from Upstox API
+  - [x] Implement `get_holdings()` - fetch from Upstox API
+  - [x] Implement `calculate_unrealized_pnl()` - real-time P&L calculation
+  - [x] Implement `calculate_realized_pnl()` - closed positions P&L
+  - [x] Add portfolio Greeks aggregation (sum Delta, Gamma, Theta, Vega)
 
-- [ ] **1.1.3** Create `order_service.py`
-  - [ ] Implement `get_order_book()` - fetch all orders
-  - [ ] Implement `get_trade_book()` - fetch executed trades
-  - [ ] Implement `track_order_status(order_id)` - poll for updates
-  - [ ] Add order history caching
+- [x] **1.1.3** Create `order_service.py` ✅ **COMPLETED**
+  - [x] Implement `get_order_book()` - fetch all orders
+  - [x] Implement `get_trade_book()` - fetch executed trades
+  - [x] Implement `track_order_status(order_id)` - poll for updates
+  - [x] Add order history caching
 
-- [ ] **1.1.4** Create SQLite cache infrastructure
-  - [ ] Design cache schema with TTL support
-  - [ ] Implement cache invalidation logic
-  - [ ] Add cache statistics (hit rate, miss rate)
+- [x] **1.1.4** Create SQLite cache infrastructure ✅ **COMPLETED**
+  - [x] Design cache schema with TTL support
+  - [x] Implement cache invalidation logic
+  - [x] Add cache statistics (hit rate, miss rate)
 
 ### 1.2 Replace Dummy Data with Live Data
 
@@ -88,33 +88,33 @@ data/
 
 **Tasks:**
 
-- [ ] **1.2.1** Update Main Dashboard (`app.py`)
-  - [ ] Replace hardcoded positions with `portfolio_service.get_positions()`
-  - [ ] Calculate live P&L using current LTP
-  - [ ] Display actual margin utilized vs available
-  - [ ] Show real-time portfolio heat percentage
-  - [ ] Add "Last Updated" timestamp to all data sections
-  - [ ] Add connection status indicator (green dot = connected)
+- [x] **1.2.1** Update Main Dashboard (`app.py`) ✅ **COMPLETED**
+  - [x] Replace hardcoded positions with `portfolio_service.get_positions()`
+  - [x] Calculate live P&L using current LTP
+  - [x] Display actual margin utilized vs available
+  - [x] Show real-time portfolio heat percentage
+  - [x] Add "Last Updated" timestamp to all data sections
+  - [x] Add connection status indicator (green dot = connected)
 
-- [ ] **1.2.2** Update Positions Page
-  - [ ] Fetch live positions from Upstox
-  - [ ] Calculate real-time Greeks for each options position
-  - [ ] Show combined portfolio Greeks
-  - [ ] Display margin requirement per position
-  - [ ] Add actual LTP with last update time
-  - [ ] Remove all `positions_data = {...}` hardcoded dictionaries
+- [x] **1.2.2** Update Positions Page ✅ **COMPLETED**
+  - [x] Fetch live positions from Upstox
+  - [x] Calculate real-time Greeks for each options position
+  - [x] Show combined portfolio Greeks
+  - [x] Display margin requirement per position
+  - [x] Add actual LTP with last update time
+  - [x] Remove all `positions_data = {...}` hardcoded dictionaries
 
-- [ ] **1.2.3** Update Trading Signals Page
-  - [ ] Fetch real-time price data for signal calculation
+- [ ] **1.2.3** Update Trading Signals Page (Partial - Uses live data provider)
+  - [x] Fetch real-time price data for signal calculation
   - [ ] Generate signals from live market data
   - [ ] Add last signal calculation timestamp
   - [ ] Remove sample signal data
 
-- [ ] **1.2.4** Update Performance Page
+- [ ] **1.2.4** Update Performance Page (Partial)
   - [ ] Replace dummy equity curve with actual trade history
   - [ ] Calculate real returns from closed trades
   - [ ] Show actual win rate, Sharpe ratio from real data
-  - [ ] Add "No data available" state for new accounts
+  - [x] Add "No data available" state for new accounts
 
 ### 1.3 Capital Management System
 
@@ -125,14 +125,14 @@ data/
 
 **Tasks:**
 
-- [ ] **1.3.1** Create `capital_service.py`
-  - [ ] Implement `get_current_capital()` - fetch from DB
-  - [ ] Implement `set_initial_capital(amount)` - first-time setup
-  - [ ] Implement `adjust_capital(amount, type, reason)` - deposit/withdrawal
-  - [ ] Implement `get_capital_history()` - audit trail
-  - [ ] Calculate Time-Weighted Return (TWR) accounting for deposits/withdrawals
+- [x] **1.3.1** Create `capital_service.py` ✅ **COMPLETED**
+  - [x] Implement `get_current_capital()` - fetch from DB
+  - [x] Implement `set_initial_capital(amount)` - first-time setup
+  - [x] Implement `adjust_capital(amount, type, reason)` - deposit/withdrawal
+  - [x] Implement `get_capital_history()` - audit trail
+  - [x] Calculate Time-Weighted Return (TWR) accounting for deposits/withdrawals
 
-- [ ] **1.3.2** Design Capital Database Schema
+- [x] **1.3.2** Design Capital Database Schema ✅ **COMPLETED**
   ```sql
   CREATE TABLE capital_state (
     id INTEGER PRIMARY KEY,
@@ -152,18 +152,18 @@ data/
   );
   ```
 
-- [ ] **1.3.3** Update Settings Page UI
-  - [ ] Add "Capital & Account" section
-  - [ ] Display current capital (large, prominent)
-  - [ ] Add "Adjust Capital" button → opens modal
-  - [ ] Modal fields: Amount, Type (Deposit/Withdrawal), Reason
-  - [ ] Show capital adjustment history table
-  - [ ] Add initial capital setup wizard (first launch)
+- [x] **1.3.3** Update Settings Page UI ✅ **COMPLETED**
+  - [x] Add "Capital & Account" section
+  - [x] Display current capital (large, prominent)
+  - [x] Add "Adjust Capital" button → opens modal
+  - [x] Modal fields: Amount, Type (Deposit/Withdrawal), Reason
+  - [x] Show capital adjustment history table
+  - [x] Add initial capital setup wizard (first launch)
 
-- [ ] **1.3.4** Integrate with Position Sizing
-  - [ ] Modify `PositionSizer` to use `capital_service.get_current_capital()`
-  - [ ] Recalculate max position sizes when capital changes
-  - [ ] Update portfolio heat calculations with new capital
+- [x] **1.3.4** Integrate with Position Sizing ✅ **COMPLETED**
+  - [x] Modify `PositionSizer` to use `capital_service.get_current_capital()`
+  - [x] Recalculate max position sizes when capital changes
+  - [x] Update portfolio heat calculations with new capital
 
 - [ ] **1.3.5** Capital Allocation Feature (Optional - Advanced)
   - [ ] Add strategy-level capital allocation
@@ -179,27 +179,27 @@ data/
 
 **Tasks:**
 
-- [ ] **1.4.1** Create `token_manager.py`
-  - [ ] Implement `store_token(access_token, expiry_time)`
-  - [ ] Implement `get_token()` - return token if valid, else None
-  - [ ] Implement `is_token_expired()` - check expiry
-  - [ ] Implement `get_time_until_expiry()` - for warnings
-  - [ ] Store tokens securely (encrypted or in secure location)
+- [x] **1.4.1** Create `token_manager.py` ✅ **COMPLETED**
+  - [x] Implement `store_token(access_token, expiry_time)`
+  - [x] Implement `get_token()` - return token if valid, else None
+  - [x] Implement `is_token_expired()` - check expiry
+  - [x] Implement `get_time_until_expiry()` - for warnings
+  - [x] Store tokens securely (obfuscated in secure location)
 
-- [ ] **1.4.2** Update OAuth Flow in `main.py`
-  - [ ] Automatically store token expiry (Upstox tokens expire in 24h)
-  - [ ] Add token refresh reminder
+- [x] **1.4.2** Update OAuth Flow in `main.py` ✅ **COMPLETED**
+  - [x] Automatically store token expiry (Upstox tokens expire in 24h)
+  - [x] Add token refresh reminder
 
-- [ ] **1.4.3** Add Token Status to Dashboard
-  - [ ] Show token expiry countdown in sidebar
-  - [ ] Warning banner when < 2 hours remaining
-  - [ ] Red alert when expired with re-auth button
-  - [ ] Auto-redirect to auth page if token expired
+- [x] **1.4.3** Add Token Status to Dashboard ✅ **COMPLETED**
+  - [x] Show token expiry countdown in sidebar
+  - [x] Warning banner when < 2 hours remaining
+  - [x] Red alert when expired with re-auth button
+  - [x] Auto-redirect to auth page if token expired
 
 - [ ] **1.4.4** Implement Auto Re-Authentication (Advanced)
   - [ ] Background job to check token expiry
   - [ ] Email/SMS notification when token about to expire
-  - [ ] One-click re-auth flow
+  - [x] One-click re-auth flow
 
 ---
 
@@ -762,9 +762,24 @@ data/
 - Web dashboard skeleton
 - Upstox API integration (basic)
 - Credentials verified and working
+- **Phase 1.1: Data Service Layer** (Dec 30, 2025)
+  - market_data_service.py with caching, rate limiting, connection tracking
+  - portfolio_service.py with positions, holdings, Greeks aggregation
+  - order_service.py with order/trade book and audit logging
+  - capital_service.py with TWR/CAGR calculations
+  - historical_data_service.py with gap detection
+  - SQLite cache infrastructure with TTL support
+- **Phase 1.3: Capital Management** (Dec 30, 2025)
+  - Full capital persistence system
+  - Deposit/withdrawal tracking
+  - Settings UI with capital dashboard
+- **Phase 1.4: Token Management** (Dec 30, 2025)
+  - Token storage with obfuscation
+  - Expiry tracking and warnings
+  - Dashboard status indicators
 
 ### In Progress 🔄
-- Phase 1: Foundation (Not Started)
+- Phase 1.2: Replace Dummy Data (mostly complete, some pages need additional work)
 
 ### Blocked/Waiting ⏸️
 - None currently
