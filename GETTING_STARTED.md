@@ -88,6 +88,7 @@ The application works in demo mode without API credentials. You can:
 - Test signal generation with sample data
 - Use the screening functions
 - Explore the codebase
+- **Launch the Web Dashboard**: `python launch_dashboard.py`
 
 ## Project Structure
 
@@ -117,6 +118,7 @@ TradeFlow v2/
 5. **Risk Management**: Position sizing, Drawdown management, Correlation analysis
 6. **Backtesting**: Historical testing, Monte Carlo simulation
 7. **Analytics**: Performance metrics, Trade journal, Visualizations
+8. **Web Dashboard**: Streamlit-based interactive web interface with real-time monitoring
 
 ## Troubleshooting
 
