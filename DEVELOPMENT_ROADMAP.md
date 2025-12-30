@@ -506,16 +506,19 @@ data/
 
 **Trading Signals Page:**
 
-- [ ] **4.3.1** Signal Visualization
-  - [ ] Show confidence score as progress bar (0-100%)
-  - [ ] Color code signals: Strong Buy (green), Buy (light green), Hold (gray), Sell (light red), Strong Sell (red)
-  - [ ] Add timestamp for each signal
-  - [ ] Group signals by underlying (tabs: Nifty, Bank Nifty, Others)
+- [x] **4.3.1** Signal Visualization ✅ **COMPLETED**
+  - [x] Confidence score as progress bar (0-100%)
+  - [x] Color-coded signals: Strong Buy (green), Buy (light green), Hold (gray), Sell (light red), Strong Sell (red)
+  - [x] Timestamp for each signal
+  - [x] Signals grouped by underlying in tabs (Nifty, Bank Nifty, Others)
+  - [x] Professional signal cards with hover effects
 
-- [ ] **4.3.2** Signal Details
-  - [ ] Show contributing indicators (RSI value, MACD crossover, etc.)
-  - [ ] Display timeframe selector (1min, 5min, 15min, 1day)
-  - [ ] Add "Trade This Signal" button → opens order form
+- [x] **4.3.2** Signal Details ✅ **COMPLETED**
+  - [x] Contributing indicators displayed (RSI, MACD, Supertrend, EMA, BB, VWAP)
+  - [x] Timeframe selector (1min, 5min, 15min, 30min, 1hour, 1day)
+  - [x] "Trade This Signal" button for each tradeable signal
+  - [x] Entry/Target/Stop Loss with Risk:Reward calculation
+  - [x] Technical chart with Bollinger Bands overlay
 
 **Performance Page:**
 

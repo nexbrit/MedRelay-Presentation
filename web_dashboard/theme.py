@@ -772,6 +772,273 @@ def render_refresh_control(auto_refresh: bool = True, refresh_interval: int = 30
     """
 
 
+def render_signal_card(
+    instrument: str,
+    signal: str,
+    strength: int,
+    price: float,
+    entry: float = None,
+    target: float = None,
+    stop_loss: float = None,
+    timestamp: str = None,
+    indicators: list = None
+) -> str:
+    """
+    Render a professional signal card.
+
+    Args:
+        instrument: Instrument name
+        signal: Signal type (STRONG_BUY, BUY, HOLD, SELL, STRONG_SELL)
+        strength: Signal strength (1-10)
+        price: Current price
+        entry: Entry price
+        target: Target price
+        stop_loss: Stop loss price
+        timestamp: Signal timestamp
+        indicators: List of contributing indicators
+
+    Returns:
+        HTML string for signal card
+    """
+    signal_colors = {
+        'STRONG_BUY': (COLORS['profit'], 'rgba(34, 197, 94, 0.15)'),
+        'BUY': ('#4ade80', 'rgba(74, 222, 128, 0.15)'),
+        'HOLD': (COLORS['neutral'], 'rgba(107, 114, 128, 0.15)'),
+        'SELL': ('#f87171', 'rgba(248, 113, 113, 0.15)'),
+        'STRONG_SELL': (COLORS['loss'], 'rgba(239, 68, 68, 0.15)')
+    }
+
+    color, bg_color = signal_colors.get(signal, (COLORS['neutral'], 'rgba(107, 114, 128, 0.15)'))
+
+    # Strength bar
+    strength_pct = strength * 10
+
+    # Risk:Reward calculation
+    rr_ratio = ""
+    if entry and target and stop_loss and entry > 0 and stop_loss > 0:
+        risk = abs(entry - stop_loss)
+        reward = abs(target - entry)
+        if risk > 0:
+            rr_ratio = f"1:{reward/risk:.2f}"
+
+    # Entry/Target/SL section
+    trade_details = ""
+    if entry:
+        trade_details = f"""
+        <div class="signal-trade-details">
+            <div class="trade-level entry">
+                <span class="level-label">Entry</span>
+                <span class="level-value">{format_currency(entry)}</span>
+            </div>
+            <div class="trade-level target">
+                <span class="level-label">Target</span>
+                <span class="level-value">{format_currency(target or 0)}</span>
+            </div>
+            <div class="trade-level stoploss">
+                <span class="level-label">SL</span>
+                <span class="level-value">{format_currency(stop_loss or 0)}</span>
+            </div>
+            {f'<div class="trade-level rr"><span class="level-label">R:R</span><span class="level-value">{rr_ratio}</span></div>' if rr_ratio else ''}
+        </div>
+        """
+
+    # Indicators section
+    indicators_html = ""
+    if indicators:
+        indicator_badges = " ".join(
+            f'<span class="indicator-badge">{ind}</span>' for ind in indicators
+        )
+        indicators_html = f'<div class="signal-indicators">{indicator_badges}</div>'
+
+    return f"""
+    <div class="signal-card" style="border-left: 4px solid {color}; background: {bg_color};">
+        <div class="signal-header">
+            <div class="signal-instrument">{instrument}</div>
+            <div class="signal-type" style="color: {color};">{signal.replace('_', ' ')}</div>
+        </div>
+        <div class="signal-price">{format_currency(price)}</div>
+        <div class="signal-strength">
+            <span class="strength-label">Confidence</span>
+            <div class="strength-bar">
+                <div class="strength-fill" style="width: {strength_pct}%; background: {color};"></div>
+            </div>
+            <span class="strength-value">{strength}/10</span>
+        </div>
+        {trade_details}
+        {indicators_html}
+        {f'<div class="signal-timestamp">{timestamp}</div>' if timestamp else ''}
+    </div>
+    """
+
+
+def get_signal_css() -> str:
+    """Get CSS for signal cards and related components."""
+    return f"""
+    <style>
+    /* Signal card styles */
+    .signal-card {{
+        background: {COLORS['bg_secondary']};
+        border-radius: {COMPONENTS['border_radius']};
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }}
+
+    .signal-card:hover {{
+        transform: translateY(-2px);
+        box-shadow: {COMPONENTS['shadow']};
+    }}
+
+    .signal-header {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }}
+
+    .signal-instrument {{
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: {COLORS['text_primary']};
+    }}
+
+    .signal-type {{
+        font-size: {TYPOGRAPHY['small']};
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }}
+
+    .signal-price {{
+        font-size: 1.5rem;
+        font-weight: 700;
+        font-family: {TYPOGRAPHY['font_mono']};
+        color: {COLORS['text_primary']};
+        margin-bottom: 0.75rem;
+    }}
+
+    .signal-strength {{
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }}
+
+    .strength-label {{
+        font-size: {TYPOGRAPHY['tiny']};
+        color: {COLORS['text_muted']};
+        text-transform: uppercase;
+        width: 70px;
+    }}
+
+    .strength-bar {{
+        flex: 1;
+        height: 6px;
+        background: {COLORS['bg_accent']};
+        border-radius: 3px;
+        overflow: hidden;
+    }}
+
+    .strength-fill {{
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }}
+
+    .strength-value {{
+        font-size: {TYPOGRAPHY['small']};
+        font-family: {TYPOGRAPHY['font_mono']};
+        color: {COLORS['text_secondary']};
+        width: 40px;
+        text-align: right;
+    }}
+
+    .signal-trade-details {{
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        background: {COLORS['bg_accent']};
+        border-radius: 4px;
+    }}
+
+    .trade-level {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }}
+
+    .level-label {{
+        font-size: {TYPOGRAPHY['tiny']};
+        color: {COLORS['text_muted']};
+        text-transform: uppercase;
+    }}
+
+    .level-value {{
+        font-size: {TYPOGRAPHY['small']};
+        font-family: {TYPOGRAPHY['font_mono']};
+        color: {COLORS['text_primary']};
+        font-weight: 500;
+    }}
+
+    .trade-level.entry .level-value {{ color: {COLORS['info']}; }}
+    .trade-level.target .level-value {{ color: {COLORS['profit']}; }}
+    .trade-level.stoploss .level-value {{ color: {COLORS['loss']}; }}
+
+    .signal-indicators {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }}
+
+    .indicator-badge {{
+        font-size: {TYPOGRAPHY['tiny']};
+        padding: 0.125rem 0.375rem;
+        background: {COLORS['bg_accent']};
+        color: {COLORS['text_secondary']};
+        border-radius: 3px;
+    }}
+
+    .signal-timestamp {{
+        font-size: {TYPOGRAPHY['tiny']};
+        color: {COLORS['text_muted']};
+        text-align: right;
+    }}
+
+    /* Signal tabs */
+    .signal-tabs {{
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid {COLORS['border_light']};
+        padding-bottom: 0.5rem;
+    }}
+
+    .signal-tab {{
+        padding: 0.5rem 1rem;
+        border-radius: {COMPONENTS['border_radius']};
+        background: {COLORS['bg_secondary']};
+        color: {COLORS['text_secondary']};
+        cursor: pointer;
+        border: none;
+        font-size: {TYPOGRAPHY['small']};
+        transition: all 0.15s ease;
+    }}
+
+    .signal-tab.active {{
+        background: {COLORS['accent_primary']};
+        color: white;
+    }}
+
+    .signal-tab:hover:not(.active) {{
+        background: {COLORS['bg_accent']};
+    }}
+    </style>
+    """
+
+
 def get_additional_css() -> str:
     """
     Get additional CSS for Phase 4.2.3 and 4.2.4 components.
