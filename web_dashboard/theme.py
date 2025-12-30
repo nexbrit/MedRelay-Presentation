@@ -1210,3 +1210,392 @@ def get_additional_css() -> str:
     }}
     </style>
     """
+
+
+def get_mobile_css() -> str:
+    """
+    Get mobile-responsive CSS for Phase 4.4.
+
+    Returns responsive styles for tablet and mobile breakpoints.
+
+    Returns:
+        CSS string with media queries
+    """
+    return f"""
+    <style>
+    /* ===== MOBILE RESPONSIVENESS (Phase 4.4) ===== */
+
+    /* Tablet breakpoint (max-width: 1024px) */
+    @media screen and (max-width: 1024px) {{
+        .main .block-container {{
+            padding-left: 1rem;
+            padding-right: 1rem;
+            max-width: 100%;
+        }}
+
+        /* Market strip horizontal scroll on tablet */
+        .market-strip {{
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            justify-content: flex-start;
+        }}
+
+        .market-item {{
+            min-width: 120px;
+            flex-shrink: 0;
+        }}
+
+        /* Account card grid adjustment */
+        .account-card > div:last-child {{
+            grid-template-columns: repeat(2, 1fr);
+        }}
+
+        /* Signal trade details 2 columns */
+        .signal-trade-details {{
+            grid-template-columns: repeat(2, 1fr);
+        }}
+
+        /* Positions table compact mode */
+        .positions-table {{
+            min-width: 700px;
+        }}
+
+        .positions-table th,
+        .positions-table td {{
+            padding: 0.5rem 0.375rem;
+            font-size: {TYPOGRAPHY['tiny']};
+        }}
+
+        /* Hide less critical columns on tablet */
+        .positions-table th:nth-child(10),
+        .positions-table td:nth-child(10) {{
+            display: none;  /* Hide Greeks column */
+        }}
+    }}
+
+    /* Mobile breakpoint (max-width: 768px) */
+    @media screen and (max-width: 768px) {{
+        .main .block-container {{
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }}
+
+        /* Typography adjustments */
+        h1 {{
+            font-size: 1.75rem !important;
+        }}
+
+        h2 {{
+            font-size: 1.5rem !important;
+        }}
+
+        h3 {{
+            font-size: 1.25rem !important;
+        }}
+
+        /* Market strip vertical layout on mobile */
+        .market-strip {{
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.5rem;
+        }}
+
+        .market-item {{
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid {COLORS['border_dark']};
+        }}
+
+        .market-item:last-child {{
+            border-bottom: none;
+        }}
+
+        .market-label {{
+            flex: 1;
+            text-align: left;
+        }}
+
+        .market-value {{
+            font-size: 1rem;
+            margin: 0 0.5rem;
+        }}
+
+        .market-change {{
+            min-width: 60px;
+            text-align: right;
+        }}
+
+        /* Account card mobile layout */
+        .account-card {{
+            padding: 1rem;
+        }}
+
+        .account-capital {{
+            font-size: 1.75rem;
+        }}
+
+        .account-card > div:first-child {{
+            flex-direction: column;
+            gap: 1rem;
+        }}
+
+        .account-card > div:first-child > div:last-child {{
+            text-align: left;
+        }}
+
+        .account-card > div:last-child {{
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }}
+
+        /* Signal cards full width */
+        .signal-card {{
+            margin-bottom: 0.75rem;
+        }}
+
+        .signal-header {{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }}
+
+        .signal-price {{
+            font-size: 1.25rem;
+        }}
+
+        .signal-trade-details {{
+            grid-template-columns: 1fr 1fr;
+            gap: 0.375rem;
+        }}
+
+        .signal-strength {{
+            flex-wrap: wrap;
+        }}
+
+        .strength-label {{
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }}
+
+        .strength-bar {{
+            flex: 1;
+            min-width: 100px;
+        }}
+
+        /* Connection indicator compact */
+        .connection-indicator {{
+            padding: 0.375rem 0.75rem;
+            flex-wrap: wrap;
+        }}
+
+        .last-update-time {{
+            width: 100%;
+            margin-top: 0.25rem;
+            margin-left: 0;
+        }}
+
+        /* Positions table mobile-friendly */
+        .positions-table-container {{
+            border-radius: 0;
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }}
+
+        .positions-table {{
+            min-width: 600px;
+        }}
+
+        /* Hide more columns on mobile */
+        .positions-table th:nth-child(7),
+        .positions-table td:nth-child(7),
+        .positions-table th:nth-child(9),
+        .positions-table td:nth-child(9),
+        .positions-table th:nth-child(10),
+        .positions-table td:nth-child(10) {{
+            display: none;  /* Hide % Capital, DTE, Greeks */
+        }}
+
+        /* Metrics compact on mobile */
+        [data-testid="stMetricValue"] {{
+            font-size: 1.25rem !important;
+        }}
+
+        [data-testid="stMetricLabel"] {{
+            font-size: 0.7rem !important;
+        }}
+
+        /* Tabs scroll horizontally */
+        .stTabs [data-baseweb="tab-list"] {{
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.25rem;
+        }}
+
+        .stTabs [data-baseweb="tab"] {{
+            white-space: nowrap;
+            padding: 0.375rem 0.75rem;
+            font-size: {TYPOGRAPHY['tiny']};
+        }}
+
+        /* Buttons full width on mobile */
+        .stButton > button {{
+            width: 100%;
+            padding: 0.75rem 1rem;
+        }}
+
+        /* Sidebar collapsed by default - handled by Streamlit */
+        [data-testid="stSidebar"] {{
+            min-width: 240px;
+        }}
+
+        /* Badge smaller on mobile */
+        .badge {{
+            padding: 0.125rem 0.375rem;
+            font-size: 0.625rem;
+        }}
+
+        /* Heat gauge */
+        .heat-gauge {{
+            height: 6px;
+        }}
+    }}
+
+    /* Small mobile (max-width: 480px) */
+    @media screen and (max-width: 480px) {{
+        h1 {{
+            font-size: 1.5rem !important;
+        }}
+
+        h2 {{
+            font-size: 1.25rem !important;
+        }}
+
+        h3 {{
+            font-size: 1.125rem !important;
+        }}
+
+        .account-capital {{
+            font-size: 1.5rem;
+        }}
+
+        .account-card > div:last-child {{
+            grid-template-columns: 1fr;
+        }}
+
+        /* Signal trade details stack */
+        .signal-trade-details {{
+            grid-template-columns: 1fr;
+        }}
+
+        .signal-card {{
+            padding: 0.75rem;
+        }}
+
+        /* Market strip more compact */
+        .market-value {{
+            font-size: 0.875rem;
+        }}
+
+        /* Metric cards stack */
+        .metric-card {{
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }}
+    }}
+
+    /* Touch-friendly improvements */
+    @media (hover: none) and (pointer: coarse) {{
+        /* Larger tap targets */
+        .stButton > button {{
+            min-height: 44px;
+        }}
+
+        .stTabs [data-baseweb="tab"] {{
+            min-height: 44px;
+        }}
+
+        /* Remove hover effects on touch */
+        .signal-card:hover {{
+            transform: none;
+            box-shadow: none;
+        }}
+
+        .positions-table tbody tr:hover {{
+            background: transparent;
+        }}
+
+        /* Increase spacing for touch */
+        .signal-tabs {{
+            gap: 0.75rem;
+        }}
+
+        .signal-tab {{
+            padding: 0.75rem 1rem;
+        }}
+    }}
+
+    /* Print styles */
+    @media print {{
+        .market-strip,
+        .connection-indicator,
+        .refresh-control,
+        .stSidebar,
+        .stButton {{
+            display: none !important;
+        }}
+
+        .main .block-container {{
+            max-width: 100%;
+            padding: 0;
+        }}
+
+        .account-card,
+        .signal-card,
+        .positions-table-container {{
+            break-inside: avoid;
+        }}
+
+        body {{
+            background: white !important;
+            color: black !important;
+        }}
+
+        .positions-table th,
+        .positions-table td {{
+            border: 1px solid #ccc !important;
+        }}
+    }}
+
+    /* Landscape orientation on mobile */
+    @media screen and (max-width: 896px) and (orientation: landscape) {{
+        .market-strip {{
+            flex-direction: row;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }}
+
+        .market-item {{
+            flex-direction: column;
+            min-width: 100px;
+            border-bottom: none;
+        }}
+
+        .account-card > div:last-child {{
+            grid-template-columns: repeat(4, 1fr);
+        }}
+    }}
+
+    /* Safe area for notched phones */
+    @supports (padding: max(0px)) {{
+        .main .block-container {{
+            padding-left: max(0.5rem, env(safe-area-inset-left));
+            padding-right: max(0.5rem, env(safe-area-inset-right));
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }}
+    }}
+    </style>
+    """

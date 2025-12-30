@@ -23,6 +23,7 @@ from web_dashboard.data_provider import get_data_provider  # noqa: E402
 from web_dashboard.theme import (  # noqa: E402
     get_custom_css,
     get_additional_css,
+    get_mobile_css,
     render_market_strip,
     render_account_summary,
     render_enhanced_positions_table,
@@ -40,6 +41,7 @@ st.set_page_config(
 # Apply professional theme CSS
 st.markdown(get_custom_css(), unsafe_allow_html=True)
 st.markdown(get_additional_css(), unsafe_allow_html=True)
+st.markdown(get_mobile_css(), unsafe_allow_html=True)
 
 # Initialize data provider
 data_provider = get_data_provider()
